@@ -1,37 +1,26 @@
-﻿Fancy fancy = new Fancy();
-fancy.Append(2);   // fancy sequence: [2]
-fancy.AddAll(3);   // fancy sequence: [2+3] -> [5]
-fancy.Append(7);   // fancy sequence: [5, 7]
-fancy.MultAll(2);  // fancy sequence: [5*2, 7*2] -> [10, 14]
-fancy.AddAll(3);   // fancy sequence: [10+3, 14+3] -> [13, 17]
-fancy.Append(10);  // fancy sequence: [13, 17, 10]
-fancy.MultAll(2);  // fancy sequence: [13*2, 17*2, 10*2] -> [26, 34, 20]
-Console.WriteLine(fancy.PrintSequence());
-Console.WriteLine("done");
-
-string[] inputInstructions = new string[] { "append", "append", "getIndex", "append", "getIndex", "addAll", "append", "getIndex", "getIndex", "append", "append", "getIndex", "append", "getIndex", "append", "getIndex", "append", "getIndex", "multAll", "addAll", "getIndex", "append", "addAll", "getIndex", "multAll", "getIndex", "multAll", "addAll", "addAll", "append", "multAll", "append", "append", "append", "multAll", "getIndex", "multAll", "multAll", "multAll", "getIndex", "addAll", "append", "multAll", "addAll", "addAll", "multAll", "addAll", "addAll", "append", "append", "getIndex" };
-int[] inputValues = new int[] { 12, 8, 1, 12, 0, 12, 8, 2, 2, 4, 13, 4, 12, 6, 11, 1, 10, 2, 3, 1, 6, 14, 5, 6, 12, 3, 12, 15, 6, 7, 8, 13, 15, 15, 10, 9, 12, 12, 9, 9, 9, 9, 4, 8, 11, 15, 9, 1, 4, 10, 9 };
-Fancy fancy2 = new Fancy();
+﻿string[] inputInstructions = new string[] { "append", "getIndex", "multAll", "multAll", "getIndex", "addAll", "append", "append", "getIndex", "append", "append", "addAll", "getIndex", "multAll", "addAll", "append", "addAll", "getIndex", "getIndex", "multAll", "multAll", "multAll", "append", "addAll", "getIndex", "getIndex", "getIndex", "append", "getIndex", "addAll", "multAll", "append", "multAll", "addAll", "getIndex", "append", "append", "addAll", "getIndex", "multAll", "getIndex", "addAll", "getIndex", "multAll", "addAll", "getIndex", "addAll", "append", "append", "append", "multAll", "multAll", "append", "multAll", "addAll", "getIndex", "addAll", "multAll", "multAll", "multAll", "append", "multAll", "append", "multAll", "addAll", "append", "append", "getIndex", "getIndex", "getIndex", "addAll", "multAll", "multAll", "append", "append", "getIndex", "append", "append", "append", "getIndex", "getIndex" };
+int[] inputValues = new int[] { 5, 0, 14, 10, 0, 12, 10, 4, 2, 4, 2, 1, 1, 8, 11, 15, 12, 0, 3, 4, 11, 11, 10, 8, 2, 3, 0, 7, 3, 2, 6, 10, 6, 8, 7, 9, 9, 12, 0, 13, 7, 3, 4, 8, 14, 2, 9, 9, 9, 7, 5, 12, 9, 3, 8, 10, 14, 14, 14, 6, 1, 3, 11, 12, 6, 7, 13, 12, 5, 6, 1, 11, 11, 4, 9, 7, 11, 1, 3, 1, 0 };
+Fancy fancy = new Fancy();
 
 for (int i = 0; i < inputInstructions.Length; i++)
 {
     switch (inputInstructions[i])
     {
         case "append":
-            fancy2.Append(inputValues[i]);
+            fancy.Append(inputValues[i]);
             break;
         case "addAll":
-            fancy2.AddAll(inputValues[i]);
+            fancy.AddAll(inputValues[i]);
             break;
         case "multAll":
-            fancy2.MultAll(inputValues[i]);
+            fancy.MultAll(inputValues[i]);
             break;
         case "getIndex":
-            fancy2.GetIndex(inputValues[i]);
+            fancy.GetIndex(inputValues[i]);
             break;
     }
 }
-Console.WriteLine(fancy2.PrintSequence());
+Console.WriteLine(fancy.PrintSequence());
 
 public interface IFancy
 {
@@ -41,14 +30,14 @@ public interface IFancy
     public long GetIndex(int idx);
 }
 
-public class Fancy: IFancy
+public class Fancy : IFancy
 {
-    private List<int> _sequence;
+    private List<List<int>> _sequence;
     private List<Instruction> _instructions;
 
     public Fancy()
     {
-        _sequence = new List<int>();
+        _sequence = new List<List<int>>();
         _instructions = new List<Instruction>();
     }
 
@@ -67,7 +56,7 @@ public class Fancy: IFancy
 
     public void Append(int value)
     {
-        _sequence.Add(value);
+        _sequence.Add(new List<int> { value });
     }
 
     public void AddAll(int operand)
@@ -89,9 +78,13 @@ public class Fancy: IFancy
             return -1;
         }
 
-        long productAndSum = _sequence.ElementAt(index);
+        List<int> modProductSumValues = _sequence[index];
+        // First number in sequence has no instructions calculated
+        int lastCalculatedIndex = modProductSumValues.Count - 1;
 
-        for (int i = 0; i < _instructions.Count; i++)
+        long modProductSumValue = modProductSumValues[lastCalculatedIndex];
+
+        for (int i = lastCalculatedIndex; i < _instructions.Count; i++)
         {
             Instruction instruction = _instructions[i];
             if (!instruction.isApplicable(index))
@@ -102,15 +95,17 @@ public class Fancy: IFancy
             switch (instruction.operation)
             {
                 case Operation.Add:
-                    productAndSum += instruction.operand;
+                    modProductSumValue = (modProductSumValue + instruction.operand) % (1000000000 + 7);
                     break;
                 case Operation.Multiply:
-                    productAndSum *= instruction.operand;
+                    modProductSumValue = (modProductSumValue * instruction.operand) % (1000000000 + 7);
                     break;
             }
+
+            modProductSumValues.Add((int) modProductSumValue);
         };
 
-        return productAndSum;
+        return modProductSumValue;
     }
 }
 
