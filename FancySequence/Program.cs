@@ -30,33 +30,3 @@ sw.Stop();
 
 Console.WriteLine(fancy.PrintSequence());
 Console.WriteLine(sw.Elapsed.ToString());
-
-string[] inputInstructions2 = new string[] { "append", "addAll", "getIndex", "append", "getIndex", "append", "multAll", "getIndex", "getIndex", "multAll", "getIndex" };
-int[] inputValues2 = new int[] { 7, 10, 0, 8, 0, 5, 8, 2, 0, 3, 2 };
-Fancy fancy2 = new Fancy();
-
-sw.Restart();
-
-for (int i = 0; i < inputInstructions2.Length; i++)
-{
-    switch (inputInstructions2[i])
-    {
-        case "append":
-            fancy2.Append(inputValues2[i]);
-            break;
-        case "addAll":
-            fancy2.AddAll(inputValues2[i]);
-            break;
-        case "multAll":
-            fancy2.MultAll(inputValues2[i]);
-            break;
-        case "getIndex":
-            Console.WriteLine(fancy2.GetIndex(inputValues2[i]));
-            break;
-    }
-}
-
-sw.Stop();
-
-Console.WriteLine(fancy2.PrintSequence());
-Console.WriteLine(sw.Elapsed.ToString());
