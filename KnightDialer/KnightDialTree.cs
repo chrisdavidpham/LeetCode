@@ -9,17 +9,23 @@ namespace KnightDialer
 {
     public class KnightDialTree
     {
-        private KnightDialTreeNode _head;
+        private PhonePadPosition _headPosition;
+        private KnightDialTreeService _knightDialTreeService;
         private Dictionary<PhonePadPosition, KnightDialTreeNode> _nodeDictionary;
-        private Dictionary<PhonePadPosition, Dictionary<int, int>> _permutationDictionary;
 
-        public KnightDialTree(PhonePadPosition head)
+        public KnightDialTree(PhonePadPosition head) : this(head, new KnightDialTreeService()) {}
+
+        public KnightDialTree(PhonePadPosition head, KnightDialTreeService knightDialTreeService)
         {
-            _head = head;
+            _headPosition = head;
+            _knightDialTreeService = knightDialTreeService;
             _nodeDictionary = KnightMoveSetBuilder.BuildKnightMoveSet();
-            _permutationDictionary = new Dictionary<PhonePadPosition, Dictionary<int, int>>();
         }
 
+        public void BuildTree(int depth)
+        {
+
+        }
     }
 }
 
